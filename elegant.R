@@ -2,6 +2,7 @@ library(RSpectra)
 
 smacofElegant <- function(theData,
                           ndim = 2,
+                          quick = FALSE,
                           itmax = 1000,
                           eps = 1e-10,
                           verbose = TRUE) {
@@ -15,7 +16,7 @@ smacofElegant <- function(theData,
   delta <- delta * sqrt(wsum / sum(wght * delta^2))
   theData$delta <- delta
   cinit <- smacofDoubleCenter(theData)
-  lbda <- smacofBound(theData)
+  lbda <- smacofBound(theData, quick)
   evev <- eigs_sym(cinit, ndim)
   cinit <- tcrossprod(evev$vectors %*% diag(sqrt(evev$values)))
   dold <- rep(0, ndat)
@@ -93,8 +94,11 @@ smacofBound <- function(theData, quick = FALSE) {
   iind <- theData$iind
   jind <- theData$jind
   wght <- theData$weights
-  if (quick) {
+  if (quick == 1) {
     return(2 * nobj * max(wght))
+  }
+  if (quick == 2) {
+    return(4 * sum(wght))
   }
   asum <- 4 * diag(ndat)
   for (k in 1:(ndat - 1)) {

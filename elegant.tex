@@ -67,6 +67,46 @@
 \fi
 \makeatother
 
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{241,243,245}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
 
 \usepackage{longtable,booktabs,array}
 \usepackage{calc} % for calculating minipage widths
@@ -244,7 +284,10 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-TBD
+We discuss an improved version of the \emph{ELEGANT} algorithm for
+metric squared distance scaling (or, equivalently, for low-rank distance
+matrix completion) first introduced by De Leeuw
+(\citeproc{ref-deleeuw_U_75b}{1975}).
 \end{abstract}
 
 \renewcommand*\contentsname{Table of contents}
@@ -265,7 +308,9 @@ can be found at \url{https://github.com/deleeuw/elegant}
 \section{Introduction}\label{introduction}
 
 In \emph{squared distance multidimensional scaling} we minimize the
-least squares loss function \begin{equation}
+least squares loss
+function\footnote{The symbol $:=$ is used for defintions.}
+\begin{equation}
 \sigma(X):=\sum_{k=1}^m w_k(\delta_k^2-d_k^2(X))^2\label{eq-sstress}
 \end{equation} over \(n\times p\) configurations \(X\). Here the
 \(\delta_k\) are known non-negative \emph{pseudo-distances}, the \(w_k\)
@@ -280,23 +325,23 @@ Loss function \eqref{eq-sstress} is traditionally known as
 \emph{sstress}. In the \emph{ALSCAL} program for squared distance
 scaling (Takane, Young, and De Leeuw
 (\citeproc{ref-takane_young_deleeuw_A_77}{1977})) a coordinate descent
-algorithm is proposed to minimize loss, in which each iteration cycle
-consists of minimizing \(np\) univariate quartics. There have been quite
-a few alternative algorithms proposed, both in the area of
-multidimensional scaling (De Leeuw (\citeproc{ref-deleeuw_U_75b}{1975}),
-Browne (\citeproc{ref-browne_87}{1987}), Kearsley, Tapia, and Trosset
-(\citeproc{ref-kearsley_tapia_trosset_94}{1994})) and in that of
-low-rank distance matrix completion (Mishra, Meyer, and Sepulchre
+algorithm, in which each iteration cycle consists of minimizing \(np\)
+univariate quartics, is used to minimize loss. There have been quite a
+few alternative algorithms proposed, both in multidimensional scaling
+(De Leeuw (\citeproc{ref-deleeuw_U_75b}{1975}), Browne
+(\citeproc{ref-browne_87}{1987}), Kearsley, Tapia, and Trosset
+(\citeproc{ref-kearsley_tapia_trosset_94}{1994})) and in low-rank
+distance matrix completion (Mishra, Meyer, and Sepulchre
 (\citeproc{ref-mishra_meyer_sepulchre_11}{2011})).
 
-The reference section of this paper does not have publication
+The reference section of the present paper does not have publication
 information on De Leeuw (\citeproc{ref-deleeuw_U_75b}{1975}), in fact
-not even a URL, because the paper somehow got lost in the folds of time
+not even a URL, because that paper somehow got lost in the folds of time
 (Takane (\citeproc{ref-takane_16}{2016})). Proof of its existence are
 references to it in Takane (\citeproc{ref-takane_77}{1977}) and Browne
 (\citeproc{ref-browne_87}{1987}). At the time it was concluded that the
 algorithm proposed in De Leeuw (\citeproc{ref-deleeuw_U_75b}{1975}),
-which was proudly baptized as \emph{ELEGANT}, converged too slowly to be
+which was proudly baptized \emph{ELEGANT}, converged too slowly to be
 practical. Recent attempts to revive and improve it are De Leeuw,
 Groenen, and Pietersz
 (\citeproc{ref-deleeuw_groenen_pietersz_E_16m}{2016}) and De Leeuw
@@ -310,69 +355,223 @@ attempt.
 The original derivation of the algorithm in De Leeuw
 (\citeproc{ref-deleeuw_U_75b}{1975}) was based on \emph{augmentation}.
 The derivation is reviewed in De Leeuw, Groenen, and Pietersz
-(\citeproc{ref-deleeuw_groenen_pietersz_E_16m}{2016}). But improvements
-are possible if we discuss it in the general framework of majorization
-(De Leeuw (\citeproc{ref-deleeuw_C_96}{1996})), currently more
-familiarly known as MM ((\citeproc{ref-lange_}{\textbf{lange\_?}})).
+(\citeproc{ref-deleeuw_groenen_pietersz_E_16m}{2016}). For a general
+discussion of augmentation, see De Leeuw
+(\citeproc{ref-deleeuw_C_94c}{1994}). Improvements of \emph{ELEGANT} are
+possible if we discuss it in the general framework of majorization ,
+currently more widely known as MM (De Leeuw
+(\citeproc{ref-deleeuw_C_94c}{1994}), Heiser
+(\citeproc{ref-heiser_95}{1995}), Lange
+(\citeproc{ref-lange_16}{2016})).
 
-We change variables from \(X\) to \(C=XX'\). Thus \[
-\sigma(C)=\sum_{k=1}^m w_k(\delta_k^2-\text{tr}\ A_kC)^2
-\] Define \[
+We start by changing variables from \(X\) to \(C=XX'\). Thus
+\begin{equation}
+\sigma(C):=\sum_{k=1}^m w_k(\delta_k^2-\text{tr}\ A_kC)^2.\label{eq-csstress}
+\end{equation} If \(k\) indexes pair \((i,j)\) then
+\(A_k:=(e_i-e_j)(e_i-e_j)'\), with \(e_i\) and \(e_j\) unit
+vectors\footnote{Unit vector $e_i$
+has element $i$ equal to one and all other elements zero.}. Thus squared
+distances can be expressed as
+\(\|x_i-x_j\|^2=\text{tr}\ X'A_{ij}X=\text{tr}\ A_{ij}C\). In these new
+variables the MDS problem is now to minimize \eqref{eq-csstress} over
+all \(C\) with \(\text{rank}(C)\leq p\).
+
+It is convenient to define \begin{subequations}
+\begin{equation}
 B:=\sum_{k=1}^m w_k\delta_k^2A_k,
-\] and \[
+\end{equation}
+and 
+\begin{equation}
 V:=\sum_{k=1}^m w_ka_ka_k'
-\] with \(a_k=\text{vec}(A_k)\). Then \[
-\sigma(c)=K-2b'c+c'Vc,
-\] with \(c=\text{vec}(C)\) and \(b=\text{vec}(B)\).
+\end{equation}
+\end{subequations} with \(a_k:=\text{vec}(A_k)\). Then
+\(\sigma(c):=K-2b'c+c'Vc\), with \(c:=\text{vec}(C)\) and
+\(b:=\text{vec}(B)\).
 
-To start the majorization, use \(c=\tilde c+(c-\tilde c)\). Then \[
+To start the quadratic majorization, use \(c=\tilde c+(c-\tilde c)\).
+Then \begin{subequations}
+\begin{equation}
 \sigma(c)=\sigma(\tilde c)-2(c-\tilde c)'(b-V\tilde c)+(c-\tilde c)'V(c-\tilde c),
-\] and thus \[
-\sigma(c)\leq\sigma(\tilde c)-2(c-\tilde c)'(b-V\tilde c)+\lambda(c-\tilde c)'(c-\tilde c)=
+\end{equation} 
+and thus 
+\begin{equation}
+\sigma(c)\leq
 \sigma(\tilde c)+\lambda((c-\tilde c)-g)'((c-\tilde c)-g)-\lambda g'g,
-\] with \(\lambda\) the largest eigenvalue of \(V\) and
-\(g:=\lambda^{-1}(b-V\tilde c)\).
+\end{equation}
+\end{subequations} with \(\lambda\) the largest eigenvalue of \(V\) and
+\(g:=\lambda^{-1}(b-V\tilde c)\). In a majorization step we minimize
+\((c-\overline c)'(c-\overline c),\) where
+\(\overline{c}:=\tilde c+\lambda^{-1}(b-V\tilde c)\). {]}
 
-In a majozation step we minimize \((c-\overline c)'(c-\overline c),\)
-where \[\overline{c}:=\tilde c+\lambda^{-1}(b-V\tilde c)\].
-
-Taking the inverse of vec show that we must minimize \[
-\text{tr}\ (\overline{C}-XX')^2
-\] over \(X\).
+Now \begin{equation}
+V\tilde c=\sum_{k=1}^m w_ka_ka_k'\tilde c=\sum_{k=1}^m w_ka_k\text{tr}\ A_k\tilde C=\sum_{k=1}^m w_ka_kd_k^2(\tilde C),
+\end{equation} and thus \begin{equation}
+\text{vec}^{-1}(B-V\tilde c)=\sum_{k=1}^m w_k(\delta_k^2-d_k^2(\tilde C)A_k.
+\label{eq-vecmin}
+\end{equation} Equation \eqref{eq-vecmin} shows that in the majorization
+stepm we need to minimize \(\text{tr}\ (\overline{C}-XX')^2\) with
+\(\overline{C}:=\text{vec}^{-1}(\overline{c})\) over \(X\).
 
 \sectionbreak
 
-\section{Details}\label{details}
+\section{Bound}\label{bound}
 
 Computing \(\lambda\) is simplified by noting that the largest
 eigenvalue of \(V\) is equal to the largest eigenvalue of
-\(W^\frac12HW^\frac12\), where \(H\) has elements \[
-h_{kl}=a_k'a_l^{\ }.
-\] The elements of \(H\) are non-negative. Also \(h_{kl}\) is equal to 4
-if \(k=l\) and equal to 1 if \(A_k\) and \(A_l\) have one index in
-common, otherwise it is zero. It follows that in the complete case, with
-\(m=n(n-1)/2\), and in addition, if there are unit weights,
+\(W^\frac12HW^\frac12\), where \(H\) has elements
+\(h_{kl}=a_k'a_l^{\ }\).
+
+The elements of \(H\) are all non-negative. Also \(h_{kl}\) is equal to
+four if \(k=l\) and equal to one if \(A_k\) and \(A_l\) have one index
+in common, otherwise it is zero. It follows that in the complete case,
+with \(m=n(n-1)/2\), and in addition if there are unit weights,
 \(\lambda=2n\). In the incomplete case, still with unit weights,
 \(\lambda\leq 2n\).
 
-\[
-V\tilde c=\sum_{k=1}^m w_ka_ka_k'\tilde c=\sum_{k=1}^m w_ka_k\text{tr}\ A_k\tilde C=\sum_{k=1}^m w_ka_kd_k^2(\tilde C)
-\] and thus \[
-\text{vec}^{-1}(B-V\tilde c)=\sum_{k=1}^m w_k(\delta_k^2-d_k^2(\tilde C)A_k
-\]
-
 If it is too expensive to calculate the largest eigenvalue, we can use
-the bound \[
+the bound \begin{equation}
 \lambda=\max_x
 \frac{x'W^\frac12HW^\frac12x}{x'x}=
-\max_x\frac{x'W^\frac12HW^\frac12x}{x'Wx}\frac{x'Wx}{x'x}\leq 2n\max_k w_k
-\] This is a major improvement ofthe bound that is us3ed, either
-explicitly or implicitly, in
-(\citeproc{ref-deleeuw_75}{\textbf{deleeuw\_75?}}) and
-(\citeproc{ref-deleeuw_groenen_pietersz}{\textbf{deleeuw\_groenen\_pietersz?}}),
-which is \[
-\lambda\leq\text{tr}\ W^\frac12HW^\frac12 = 4\sum_{k-1}^m w_k.
-\]
+\max_x\frac{x'W^\frac12HW^\frac12x}{x'Wx}\frac{x'Wx}{x'x}\leq 2n\max_k w_k.\label{eq-bound1}
+\end{equation} This is a major improvement of the bound that is used,
+either explicitly or implicitly, in De Leeuw
+(\citeproc{ref-deleeuw_U_75b}{1975}) and De Leeuw, Groenen, and Pietersz
+(\citeproc{ref-deleeuw_groenen_pietersz_E_16m}{2016}), which is
+\begin{equation}
+\lambda\leq\text{tr}\ WH=4\sum_{k=1}^m w_k.\label{eq-bound1}
+\end{equation}
+
+We can illustrate this with the colour data from Ekman
+(\citeproc{ref-ekman_54}{1954}), using one minus the similarity as the
+dissimilarity measurement and the square of the dissimlarity as weight.
+The value of the eigenvalue bound is 19.21165, and smacofElegant() uses
+154 iterations (with the default precision). If we use the bound from
+\eqref{eq-bound1}, which is equal to \(2n=28\), then we need 219
+iterations. And if we use \eqref{eq-bound2}, which is 245.324, we use
+1579 iterations. Although the original \emph{ELEGANT} is indeed slow,
+the bound modification makes it ten times as fast.
+
+\sectionbreak
+
+\section{Code}\label{code}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(RSpectra)}
+
+\NormalTok{smacofElegant }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(theData,}
+                          \AttributeTok{ndim =} \DecValTok{2}\NormalTok{,}
+                          \AttributeTok{quick =} \ConstantTok{FALSE}\NormalTok{,}
+                          \AttributeTok{itmax =} \DecValTok{1000}\NormalTok{,}
+                          \AttributeTok{eps =} \FloatTok{1e{-}10}\NormalTok{,}
+                          \AttributeTok{verbose =} \ConstantTok{TRUE}\NormalTok{) \{}
+\NormalTok{  nobj }\OtherTok{\textless{}{-}}\NormalTok{ theData}\SpecialCharTok{$}\NormalTok{nobj}
+\NormalTok{  ndat }\OtherTok{\textless{}{-}}\NormalTok{ theData}\SpecialCharTok{$}\NormalTok{ndat}
+\NormalTok{  iind }\OtherTok{\textless{}{-}}\NormalTok{ theData}\SpecialCharTok{$}\NormalTok{iind}
+\NormalTok{  jind }\OtherTok{\textless{}{-}}\NormalTok{ theData}\SpecialCharTok{$}\NormalTok{jind}
+\NormalTok{  wght }\OtherTok{\textless{}{-}}\NormalTok{ theData}\SpecialCharTok{$}\NormalTok{weights}
+\NormalTok{  wsum }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(wght)}
+\NormalTok{  delta }\OtherTok{\textless{}{-}}\NormalTok{ (theData}\SpecialCharTok{$}\NormalTok{delta)}\SpecialCharTok{\^{}}\DecValTok{2}
+\NormalTok{  delta }\OtherTok{\textless{}{-}}\NormalTok{ delta }\SpecialCharTok{*} \FunctionTok{sqrt}\NormalTok{(wsum }\SpecialCharTok{/} \FunctionTok{sum}\NormalTok{(wght }\SpecialCharTok{*}\NormalTok{ delta}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{))}
+\NormalTok{  theData}\SpecialCharTok{$}\NormalTok{delta }\OtherTok{\textless{}{-}}\NormalTok{ delta}
+\NormalTok{  cinit }\OtherTok{\textless{}{-}} \FunctionTok{smacofDoubleCenter}\NormalTok{(theData)}
+\NormalTok{  lbda }\OtherTok{\textless{}{-}} \FunctionTok{smacofBound}\NormalTok{(theData, quick)}
+\NormalTok{  evev }\OtherTok{\textless{}{-}} \FunctionTok{eigs\_sym}\NormalTok{(cinit, ndim)}
+\NormalTok{  cinit }\OtherTok{\textless{}{-}} \FunctionTok{tcrossprod}\NormalTok{(evev}\SpecialCharTok{$}\NormalTok{vectors }\SpecialCharTok{\%*\%} \FunctionTok{diag}\NormalTok{(}\FunctionTok{sqrt}\NormalTok{(evev}\SpecialCharTok{$}\NormalTok{values)))}
+\NormalTok{  dold }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, ndat)}
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{ndat) \{}
+\NormalTok{    i }\OtherTok{\textless{}{-}}\NormalTok{ iind[k]}
+\NormalTok{    j }\OtherTok{\textless{}{-}}\NormalTok{ jind[k]}
+\NormalTok{    dold[k] }\OtherTok{=}\NormalTok{ cinit[i, i] }\SpecialCharTok{+}\NormalTok{ cinit[j, j] }\SpecialCharTok{{-}} \DecValTok{2} \SpecialCharTok{*}\NormalTok{ cinit[i, j]}
+\NormalTok{  \}}
+\NormalTok{  sold }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(wght }\SpecialCharTok{*}\NormalTok{ (delta }\SpecialCharTok{{-}}\NormalTok{ dold)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{) }\SpecialCharTok{/}\NormalTok{ wsum}
+\NormalTok{  itel }\OtherTok{\textless{}{-}} \DecValTok{1}
+\NormalTok{  cold }\OtherTok{\textless{}{-}}\NormalTok{ cinit}
+  \ControlFlowTok{repeat}\NormalTok{ \{}
+\NormalTok{    cmaj }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\DecValTok{0}\NormalTok{, nobj, nobj)}
+    \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{ndat) \{}
+\NormalTok{      i }\OtherTok{\textless{}{-}}\NormalTok{ iind[k]}
+\NormalTok{      j }\OtherTok{\textless{}{-}}\NormalTok{ jind[k]}
+\NormalTok{      cmaj[i, j] }\OtherTok{\textless{}{-}}\NormalTok{ cmaj[j, i] }\OtherTok{\textless{}{-}}\NormalTok{ wght[k] }\SpecialCharTok{*}\NormalTok{ (delta[k] }\SpecialCharTok{{-}}\NormalTok{ dold[k])}
+\NormalTok{    \}}
+\NormalTok{    cmaj }\OtherTok{\textless{}{-}} \SpecialCharTok{{-}}\NormalTok{cmaj}
+    \FunctionTok{diag}\NormalTok{(cmaj) }\OtherTok{\textless{}{-}} \SpecialCharTok{{-}}\FunctionTok{rowSums}\NormalTok{(cmaj)}
+\NormalTok{    cmaj }\OtherTok{\textless{}{-}}\NormalTok{ cold }\SpecialCharTok{+}\NormalTok{ cmaj }\SpecialCharTok{/}\NormalTok{ lbda}
+\NormalTok{    evev }\OtherTok{\textless{}{-}} \FunctionTok{eigs\_sym}\NormalTok{(cmaj, ndim)}
+\NormalTok{    xvev }\OtherTok{\textless{}{-}}\NormalTok{ evev}\SpecialCharTok{$}\NormalTok{vectors }\SpecialCharTok{\%*\%} \FunctionTok{diag}\NormalTok{(}\FunctionTok{sqrt}\NormalTok{(evev}\SpecialCharTok{$}\NormalTok{values))}
+\NormalTok{    cnew }\OtherTok{\textless{}{-}} \FunctionTok{tcrossprod}\NormalTok{(xvev)}
+\NormalTok{    dnew }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, ndat)}
+    \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{ndat) \{}
+\NormalTok{      i }\OtherTok{\textless{}{-}}\NormalTok{ iind[k]}
+\NormalTok{      j }\OtherTok{\textless{}{-}}\NormalTok{ jind[k]}
+\NormalTok{      dnew[k] }\OtherTok{=}\NormalTok{ cnew[i, i] }\SpecialCharTok{+}\NormalTok{ cnew[j, j] }\SpecialCharTok{{-}} \DecValTok{2} \SpecialCharTok{*}\NormalTok{ cnew[i, j]}
+\NormalTok{    \}}
+\NormalTok{    snew }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(wght }\SpecialCharTok{*}\NormalTok{ (delta }\SpecialCharTok{{-}}\NormalTok{ dnew)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{) }\SpecialCharTok{/}\NormalTok{ wsum}
+    \ControlFlowTok{if}\NormalTok{ (verbose) \{}
+      \FunctionTok{cat}\NormalTok{(}
+        \StringTok{"itel "}\NormalTok{,}
+        \FunctionTok{formatC}\NormalTok{(itel, }\AttributeTok{format =} \StringTok{"d"}\NormalTok{),}
+        \StringTok{"sold "}\NormalTok{,}
+        \FunctionTok{formatC}\NormalTok{(sold, }\AttributeTok{digits =} \DecValTok{10}\NormalTok{, }\AttributeTok{format =} \StringTok{"f"}\NormalTok{),}
+        \StringTok{"snew "}\NormalTok{,}
+        \FunctionTok{formatC}\NormalTok{(snew, }\AttributeTok{digits =} \DecValTok{10}\NormalTok{, }\AttributeTok{format =} \StringTok{"f"}\NormalTok{),}
+        \StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}
+\NormalTok{      )}
+\NormalTok{    \}}
+    \ControlFlowTok{if}\NormalTok{ ((itel }\SpecialCharTok{==}\NormalTok{ itmax) }\SpecialCharTok{||}\NormalTok{ ((sold }\SpecialCharTok{{-}}\NormalTok{ snew) }\SpecialCharTok{\textless{}}\NormalTok{ eps)) \{}
+      \ControlFlowTok{break}
+\NormalTok{    \}}
+\NormalTok{    itel }\OtherTok{\textless{}{-}}\NormalTok{ itel }\SpecialCharTok{+} \DecValTok{1}
+\NormalTok{    dold }\OtherTok{\textless{}{-}}\NormalTok{ dnew}
+\NormalTok{    sold }\OtherTok{\textless{}{-}}\NormalTok{ snew}
+\NormalTok{    cold }\OtherTok{\textless{}{-}}\NormalTok{ cnew}
+\NormalTok{  \}}
+  \FunctionTok{return}\NormalTok{(xvev)}
+\NormalTok{\}}
+
+\NormalTok{smacofDoubleCenter }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(theData) \{}
+\NormalTok{  nobj }\OtherTok{\textless{}{-}}\NormalTok{ theData}\SpecialCharTok{$}\NormalTok{nobj}
+\NormalTok{  ndat }\OtherTok{\textless{}{-}}\NormalTok{ theData}\SpecialCharTok{$}\NormalTok{ndat}
+\NormalTok{  iind }\OtherTok{\textless{}{-}}\NormalTok{ theData}\SpecialCharTok{$}\NormalTok{iind}
+\NormalTok{  jind }\OtherTok{\textless{}{-}}\NormalTok{ theData}\SpecialCharTok{$}\NormalTok{jind}
+\NormalTok{  delta }\OtherTok{\textless{}{-}}\NormalTok{ (theData}\SpecialCharTok{$}\NormalTok{delta)}\SpecialCharTok{\^{}}\DecValTok{2}
+\NormalTok{  cini }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\DecValTok{0}\NormalTok{, nobj, nobj)}
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{ndat) \{}
+\NormalTok{    i }\OtherTok{\textless{}{-}}\NormalTok{ iind[k]}
+\NormalTok{    j }\OtherTok{\textless{}{-}}\NormalTok{ jind[k]}
+\NormalTok{    cini[i, j] }\OtherTok{\textless{}{-}}\NormalTok{ cini[j, i] }\OtherTok{\textless{}{-}}\NormalTok{ delta[k]}
+\NormalTok{  \}}
+\NormalTok{  rc }\OtherTok{\textless{}{-}} \FunctionTok{apply}\NormalTok{(cini, }\DecValTok{1}\NormalTok{, mean)}
+\NormalTok{  rm }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{(cini)}
+\NormalTok{  cini }\OtherTok{\textless{}{-}} \SpecialCharTok{{-}}\NormalTok{(cini }\SpecialCharTok{{-}} \FunctionTok{outer}\NormalTok{(rc, rc, }\StringTok{"+"}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ rm) }\SpecialCharTok{/}  \DecValTok{2}
+  \FunctionTok{return}\NormalTok{(cini)}
+\NormalTok{\}}
+
+\NormalTok{smacofBound }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(theData, }\AttributeTok{quick =} \ConstantTok{FALSE}\NormalTok{) \{}
+\NormalTok{  ndat }\OtherTok{\textless{}{-}}\NormalTok{ theData}\SpecialCharTok{$}\NormalTok{ndat}
+\NormalTok{  nobj }\OtherTok{\textless{}{-}}\NormalTok{ theData}\SpecialCharTok{$}\NormalTok{nobj}
+\NormalTok{  iind }\OtherTok{\textless{}{-}}\NormalTok{ theData}\SpecialCharTok{$}\NormalTok{iind}
+\NormalTok{  jind }\OtherTok{\textless{}{-}}\NormalTok{ theData}\SpecialCharTok{$}\NormalTok{jind}
+\NormalTok{  wght }\OtherTok{\textless{}{-}}\NormalTok{ theData}\SpecialCharTok{$}\NormalTok{weights}
+  \ControlFlowTok{if}\NormalTok{ (quick }\SpecialCharTok{==} \DecValTok{1}\NormalTok{) \{}
+    \FunctionTok{return}\NormalTok{(}\DecValTok{2} \SpecialCharTok{*}\NormalTok{ nobj }\SpecialCharTok{*} \FunctionTok{max}\NormalTok{(wght))}
+\NormalTok{  \}}
+  \ControlFlowTok{if}\NormalTok{ (quick }\SpecialCharTok{==} \DecValTok{2}\NormalTok{) \{}
+    \FunctionTok{return}\NormalTok{(}\DecValTok{4} \SpecialCharTok{*} \FunctionTok{sum}\NormalTok{(wght))}
+\NormalTok{  \}}
+\NormalTok{  asum }\OtherTok{\textless{}{-}} \DecValTok{4} \SpecialCharTok{*} \FunctionTok{diag}\NormalTok{(ndat)}
+  \ControlFlowTok{for}\NormalTok{ (k }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{(ndat }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{)) \{}
+\NormalTok{    kind }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(iind[k], jind[k])}
+    \ControlFlowTok{for}\NormalTok{ (l }\ControlFlowTok{in}\NormalTok{ (k }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}\SpecialCharTok{:}\NormalTok{ndat) \{}
+\NormalTok{      lind }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(iind[l], jind[l])}
+\NormalTok{      asum[k, l] }\OtherTok{\textless{}{-}}\NormalTok{ asum[l, k] }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{(}\FunctionTok{outer}\NormalTok{(kind, lind, }\StringTok{"=="}\NormalTok{))}
+\NormalTok{    \}}
+\NormalTok{  \}}
+\NormalTok{  asum }\OtherTok{\textless{}{-}}\NormalTok{ asum }\SpecialCharTok{*} \FunctionTok{sqrt}\NormalTok{(}\FunctionTok{outer}\NormalTok{(wght, wght))}
+  \FunctionTok{return}\NormalTok{(}\FunctionTok{eigs\_sym}\NormalTok{(asum, }\DecValTok{1}\NormalTok{)}\SpecialCharTok{$}\NormalTok{values)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
 
 \sectionbreak
 
@@ -390,11 +589,11 @@ of Classification} 4: 175--90.
 De Leeuw, J. 1975. {``{An Alternating Least Squares Approach to Squared
 Distance Scaling}.''} Department of Data Theory FSW/RUL.
 
-\bibitem[\citeproctext]{ref-deleeuw_C_96}
----------. 1996. {``{Series Editors Introduction}.''} In \emph{{T.
-Heinen: Latent Class and Discrete Latent Trait Models}}. Advanced
-Quantitative Techniques in the Social Sciences 6. Thousand Oaks, CA:
-Sage Publications.
+\bibitem[\citeproctext]{ref-deleeuw_C_94c}
+---------. 1994. {``{Block Relaxation Algorithms in Statistics}.''} In
+\emph{Information Systems and Data Analysis}, edited by H. H. Bock, W.
+Lenski, and M. M. Richter, 308--24. Berlin: Springer Verlag.
+\url{https://jansweb.netlify.app/publication/deleeuw-c-94-c/deleeuw-c-94-c.pdf}.
 
 \bibitem[\citeproctext]{ref-deleeuw_E_16o}
 ---------. 2016. {``Convergence Rate of {ELEGANT} Algorithms.''} 2016.
@@ -405,12 +604,25 @@ De Leeuw, J., P. Groenen, and R. Pietersz. 2016. {``An Alternating Least
 Squares Approach to Squared Distance Scaling.''}
 \url{https://jansweb.netlify.app/publication/deleeuw-groenen-pietersz-e-16-m/deleeuw-groenen-pietersz-e-16-m.pdf}.
 
+\bibitem[\citeproctext]{ref-ekman_54}
+Ekman, G. 1954. {``{Dimensions of Color Vision}.''} \emph{Journal of
+Psychology} 38: 467--74.
+
+\bibitem[\citeproctext]{ref-heiser_95}
+Heiser, W. J. 1995. {``{Convergent Computing by Iterative Majorization:
+Theory and Applications in Multidimensional Data Analysis}.''} In
+\emph{Recent Advantages in Descriptive Multivariate Analysis}, edited by
+W. J. Krzanowski, 157--89. Oxford: Clarendon Press.
+
 \bibitem[\citeproctext]{ref-kearsley_tapia_trosset_94}
 Kearsley, A. J., R. A. Tapia, and M. W. Trosset. 1994. {``{The Solution
 of the Metric STRESS and SSTRESS Problems in Multidimensional Scaling
 Using Newton's Method}.''} TR94-44. Houston, TX: {Department of
 Computational and Applied Mathematics, Rice University}.
 \url{https://apps.dtic.mil/sti/pdfs/ADA445621.pdf}.
+
+\bibitem[\citeproctext]{ref-lange_16}
+Lange, K. 2016. \emph{MM Optimization Algorithms}. SIAM.
 
 \bibitem[\citeproctext]{ref-mishra_meyer_sepulchre_11}
 Mishra, B., G. Meyer, and R. Sepulchre. 2011. {``Low-Rank Optimization

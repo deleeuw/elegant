@@ -38,7 +38,7 @@ papersize: letter
 graphics: true
 link-citations: true
 mainfont: Times New Roman
-abstract: TBD
+abstract: We discuss an improved and accelerated version of the *ELEGANT* algorithm for metric squared distance scaling (or, equivalently, for low-rank distance matrix completion) first introduced by @deleeuw_U_75b.
 ---
 
 ```{r loadpackages, echo = FALSE}
@@ -52,85 +52,108 @@ suppressPackageStartupMessages(library(tinytex, quietly = TRUE))
 
 # Introduction
 
-In *squared distance multidimensional scaling* we minimize the least squares loss function \begin{equation}
+In *squared distance multidimensional scaling* we minimize the least squares loss function\footnote{The symbol $:=$ is used for defintions.} 
+\begin{equation}
 \sigma(X):=\sum_{k=1}^m w_k(\delta_k^2-d_k^2(X))^2\label{eq-sstress}
-\end{equation} over $n\times p$ configurations $X$. Here the $\delta_k$ are known non-negative *pseudo-distances*, the $w_k$ are known positive *weights*, and the $d_k(X)$ are Euclidean distances. Each index $k$ in \eqref{eq-sstress} corresponds with a pair of indices $(i,j)$, with both $1\leq i\leq n$ and $1\leq j\leq n$. Thus we try to find a configuration of $n$ points on $\mathbb{R}^p$ such that the distances between the points approximate the corresponding pseudo-distances in the data.
+\end{equation} 
+over $n\times p$ configurations $X$. Here the $\delta_k$ are known non-negative *pseudo-distances*, the $w_k$ are known positive *weights*, and the $d_k(X)$ are Euclidean distances. Each index $k$ in \eqref{eq-sstress} corresponds with a pair of indices $(i,j)$, with both $1\leq i\leq n$ and $1\leq j\leq n$. Thus we try to find a configuration of $n$ points on $\mathbb{R}^p$ such that the distances between the points approximate the corresponding pseudo-distances in the data.
 
-Loss function \eqref{eq-sstress} is traditionally known as *sstress*. In the *ALSCAL* program for squared distance scaling (@takane_young_deleeuw_A_77) a coordinate descent algorithm is proposed to minimize loss, in which each iteration cycle consists of minimizing $np$ univariate quartics. There have been quite a few alternative algorithms proposed, both in the area of multidimensional scaling (@deleeuw_U_75b, @browne_87, @kearsley_tapia_trosset_94) and in that of low-rank distance matrix completion (@mishra_meyer_sepulchre_11).
+Loss function \eqref{eq-sstress} is traditionally known as *sstress*. In the *ALSCAL* program for squared distance scaling (@takane_young_deleeuw_A_77) a coordinate descent algorithm, in which each iteration cycle consists of minimizing $np$ univariate quartics, is used to minimize loss. There have been quite a few alternative algorithms proposed, both in multidimensional scaling (@deleeuw_U_75b, @browne_87, @kearsley_tapia_trosset_94) and in low-rank distance matrix completion (@mishra_meyer_sepulchre_11).
 
-The reference section of this paper does not have publication information on @deleeuw_U_75b, in fact not even a URL, because the paper somehow got lost in the folds of time (@takane_16). Proof of its existence are references to it in @takane_77 and @browne_87.
+The reference section of the present paper does not have publication information on @deleeuw_U_75b, in fact not even a URL, because that paper somehow got lost in the folds of time (@takane_16). Proof of its existence are references to it in @takane_77 and @browne_87.
 At the time it was concluded that the algorithm proposed in
-@deleeuw_U_75b, which was proudly baptized as *ELEGANT*, converged too slowly to be practical. Recent attempts to revive and improve it are @deleeuw_groenen_pietersz_E_16m and @deleeuw_E_16o. This paper is another such attempt.
+@deleeuw_U_75b, which was proudly baptized *ELEGANT*, converged too slowly to be practical. Recent attempts to revive and improve it are @deleeuw_groenen_pietersz_E_16m and @deleeuw_E_16o. This paper is another such attempt.
 
 \sectionbreak
 
 # Majorization
 
-The original derivation of the algorithm in @deleeuw_U_75b was based on *augmentation*. The derivation is reviewed in @deleeuw_groenen_pietersz_E_16m. But improvements are possible
+The original derivation of the algorithm in @deleeuw_U_75b was based on *augmentation*. The derivation is reviewed in @deleeuw_groenen_pietersz_E_16m. For a general discussion of augmentation, see @deleeuw_C_94c. Improvements of *ELEGANT* are possible
 if we discuss it in the general framework of majorization
-(@deleeuw_C_96), currently more familiarly known as MM (@lange_).
+, currently more widely known as MM (@deleeuw_C_94c, @heiser_95, @lange_16).
 
-We change variables from $X$ to $C=XX'$. Thus
-$$
-\sigma(C)=\sum_{k=1}^m w_k(\delta_k^2-\text{tr}\ A_kC)^2
-$$ 
-Define 
-$$
+We start by changing variables from $X$ to $C=XX'$. Thus
+\begin{equation}
+\sigma(C):=\sum_{k=1}^m w_k(\delta_k^2-\text{tr}\ A_kC)^2.\label{eq-csstress}
+\end{equation}
+If $k$ indexes pair $(i,j)$ then $A_k:=(e_i-e_j)(e_i-e_j)'$,
+with $e_i$ and $e_j$ unit vectors\footnote{Unit vector $e_i$
+has element $i$ equal to one and all other elements zero.}.
+Thus squared distances can be expressed as $\|x_i-x_j\|^2=\text{tr}\ X'A_{ij}X=\text{tr}\ A_{ij}C$. In these new variables the MDS problem is now to minimize \eqref{eq-csstress} over all $C$ with $\text{rank}(C)\leq p$.
+
+
+It is convenient to define 
+\begin{subequations}
+\begin{equation}
 B:=\sum_{k=1}^m w_k\delta_k^2A_k,
-$$ 
+\end{equation}
 and 
-$$
+\begin{equation}
 V:=\sum_{k=1}^m w_ka_ka_k'
-$$ 
-with $a_k=\text{vec}(A_k)$. Then 
-$$
-\sigma(c)=K-2b'c+c'Vc,
-$$ 
-with $c=\text{vec}(C)$ and $b=\text{vec}(B)$. 
+\end{equation}
+\end{subequations}
+with $a_k:=\text{vec}(A_k)$. Then 
+$\sigma(c):=K-2b'c+c'Vc$, with $c:=\text{vec}(C)$ and $b:=\text{vec}(B)$. 
 
-To start the majorization, use $c=\tilde c+(c-\tilde c)$. Then
-$$
+To start the quadratic majorization, use $c=\tilde c+(c-\tilde c)$. Then
+\begin{subequations}
+\begin{equation}
 \sigma(c)=\sigma(\tilde c)-2(c-\tilde c)'(b-V\tilde c)+(c-\tilde c)'V(c-\tilde c),
-$$ 
+\end{equation} 
 and thus 
-$$
-\sigma(c)\leq\sigma(\tilde c)-2(c-\tilde c)'(b-V\tilde c)+\lambda(c-\tilde c)'(c-\tilde c)=
+\begin{equation}
+\sigma(c)\leq
 \sigma(\tilde c)+\lambda((c-\tilde c)-g)'((c-\tilde c)-g)-\lambda g'g,
-$$ 
-with $\lambda$ the largest eigenvalue of $V$ and $g:=\lambda^{-1}(b-V\tilde c)$. 
-
-In a majozation step we minimize 
+\end{equation}
+\end{subequations}
+with $\lambda$ the largest eigenvalue of $V$ and $g:=\lambda^{-1}(b-V\tilde c)$. In a majorization step we minimize 
 $(c-\overline c)'(c-\overline c),$
-where $$\overline{c}:=\tilde c+\lambda^{-1}(b-V\tilde c)$$. 
+where $\overline{c}:=\tilde c+\lambda^{-1}(b-V\tilde c)$. ]
 
-Taking the inverse of vec show that we must minimize 
-$$
-\text{tr}\ (\overline{C}-XX')^2
-$$
-over $X$.
+Now
+\begin{equation}
+V\tilde c=\sum_{k=1}^m w_ka_ka_k'\tilde c=\sum_{k=1}^m w_ka_k\text{tr}\ A_k\tilde C=\sum_{k=1}^m w_ka_kd_k^2(\tilde C),
+\end{equation} 
+and thus 
+\begin{equation}
+\text{vec}^{-1}(B-V\tilde c)=\sum_{k=1}^m w_k(\delta_k^2-d_k^2(\tilde C)A_k.
+\label{eq-vecmin}
+\end{equation}
+Equation \eqref{eq-vecmin} shows that in the majorization stepm we need to minimize
+$\text{tr}\ (\overline{C}-XX')^2$
+with $\overline{C}:=\text{vec}^{-1}(\overline{c})$ over $X$.
 
 \sectionbreak
 
-# Details
+# Bound
 
-Computing $\lambda$ is simplified by noting that the largest eigenvalue of $V$ is equal to the largest eigenvalue of $W^\frac12HW^\frac12$, where $H$ has elements $$
-h_{kl}=a_k'a_l^{\ }.
-$$ 
-The elements of $H$ are non-negative. Also $h_{kl}$ is equal to 4 if $k=l$ and equal to 1 if $A_k$ and $A_l$ have one index in common, otherwise it is zero. It follows that in the complete case, with $m=n(n-1)/2$, and in addition, if there are unit weights, $\lambda=2n$. In the incomplete case, still with unit weights, $\lambda\leq 2n$.
+Computing $\lambda$ is simplified by noting that the largest eigenvalue of $V$ is equal to the largest eigenvalue of $W^\frac12HW^\frac12$, where $H$ has elements $h_{kl}=a_k'a_l^{\ }$.
 
-$$
-V\tilde c=\sum_{k=1}^m w_ka_ka_k'\tilde c=\sum_{k=1}^m w_ka_k\text{tr}\ A_k\tilde C=\sum_{k=1}^m w_ka_kd_k^2(\tilde C)
-$$ and thus $$
-\text{vec}^{-1}(B-V\tilde c)=\sum_{k=1}^m w_k(\delta_k^2-d_k^2(\tilde C)A_k
-$$
+The elements of $H$ are all non-negative. Also $h_{kl}$ is equal to four if $k=l$ and equal to one if $A_k$ and $A_l$ have one index in common, otherwise it is zero. It follows that in the complete case, with $m=n(n-1)/2$, and in addition if there are unit weights, $\lambda=2n$. In the incomplete case, still with unit weights, $\lambda\leq 2n$.
 
-If it is too expensive to calculate the largest eigenvalue, we can use the bound $$
+If it is too expensive to calculate the largest eigenvalue, we can use the bound 
+\begin{equation}
 \lambda=\max_x
 \frac{x'W^\frac12HW^\frac12x}{x'x}=
-\max_x\frac{x'W^\frac12HW^\frac12x}{x'Wx}\frac{x'Wx}{x'x}\leq 2n\max_k w_k
-$$ This is a major improvement ofthe bound that is us3ed, either explicitly or implicitly, in @deleeuw_75 and @deleeuw_groenen_pietersz, which is $$
-\lambda\leq\text{tr}\ W^\frac12HW^\frac12 = 4\sum_{k-1}^m w_k.
-$$
+\max_x\frac{x'W^\frac12HW^\frac12x}{x'Wx}\frac{x'Wx}{x'x}\leq 2n\max_k w_k.\label{eq-bound1}
+\end{equation}
+This is a major improvement of the bound that is used, either explicitly or implicitly, in @deleeuw_U_75b and @deleeuw_groenen_pietersz_E_16m, which is 
+\begin{equation}
+\lambda\leq\text{tr}\ WH=4\sum_{k=1}^m w_k.\label{eq-bound1}
+\end{equation}
+
+We can illustrate this with the colour data from @ekman_54, using one minus the similarity as the dissimilarity
+measurement and the square of the dissimlarity as weight. The value of the eigenvalue bound is 19.21165, and smacofElegant() uses 154 iterations (with the default precision). If we use the bound from \eqref{eq-bound1}, which is equal to $2n=28$, then we need 219 iterations. And if we use \eqref{eq-bound2}, which is 245.324,  we use 1579 iterations. Although the original *ELEGANT* is indeed slow, the bound modification makes it ten times as fast.
+
+
+
+\sectionbreak
+
+# Code
+
+```{r code, code = readLines("elegant.R"), eval = FALSE}
+```
+
 
 \sectionbreak
 
